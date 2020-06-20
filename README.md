@@ -4,11 +4,11 @@ Different surface extension algorithms for computer controlled optical surfacing
 ## Implemented algorithms
 Surface extension algorithms for arbitrary shape of the original surface error map, including
 - [x] Zero extension
-- [x] Gaussian extension [3-8]
-- [x] Nearest neighbor extension [2, 8]
-- [x] Nearest neighbor extension with fall on edge[8]
-- [x] C1 smooth extension [5, 8]
-- [x] C1 smooth extension withf all on edge [5, 8]
+- [x] Gaussian extension [3-9]
+- [x] Nearest neighbor extension [2, 6, 8]
+- [x] Nearest neighbor extension with fall on edge [8]
+- [x] C1 smooth extension [5, 6, 8]
+- [x] C1 smooth extension withf all on edge [5, 6, 8]
 - [x] Gerchberg extension [1, 4, 6]
 
 ## Usage
@@ -37,8 +37,10 @@ The main function is ```[X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension(X, Y
 
 [5] [Zhou, L., Dai, Y., Xie, X., Peng, X., Shi, F., & Li, S. (2016, May). Methods to extend surface error map in dwell time algorithm. In EUSPEN’s 16th International Conference & Exhibition.](https://www.euspen.eu/euspen-knowledge-base/proceedings/)
 
-[6] [Cheng, H. (2016). Independent variables for optical surfacing systems. Springer-Verlag Berlin An.](https://link.springer.com/content/pdf/10.1007/978-3-642-45355-7.pdf)
+[6] [Yang, B., Xie, X., Li, F., & Zhou, L. (2017). Edge effect correction using ion beam figuring. Applied Optics, 56(32), 8950-8958.](https://doi.org/10.1364/AO.56.008950)
 
-[7] [唐才学, 颜浩, 罗子健, 张远航, & 温圣林. (2019). 连续位相板磁流变加工中高精度边缘延拓技术. 红外与激光工程, (2019 年 04), 154-160.](https://www.airitilibrary.com/Publication/alDetailedMesh?docid=hwyjggc201904023)
+[7] [Cheng, H. (2016). Independent variables for optical surfacing systems. Springer-Verlag Berlin An.](https://link.springer.com/content/pdf/10.1007/978-3-642-45355-7.pdf)
 
-[8] [Zhou, L., Dai, Y., Xie, X., & Li, S. (2016, October). Computations involved in IBF process and introduction of the software IBFCAM. In Advanced Optical Design and Manufacturing Technology and Astronomical Telescopes and Instrumentation (Vol. 10154, p. 101541S). International Society for Optics and Photonics.](https://doi.org/10.1117/12.2247130)
+[8] [唐才学, 颜浩, 罗子健, 张远航, & 温圣林. (2019). 连续位相板磁流变加工中高精度边缘延拓技术. 红外与激光工程, (2019 年 04), 154-160.](https://www.airitilibrary.com/Publication/alDetailedMesh?docid=hwyjggc201904023)
+
+[9] [Zhou, L., Dai, Y., Xie, X., & Li, S. (2016, October). Computations involved in IBF process and introduction of the software IBFCAM. In Advanced Optical Design and Manufacturing Technology and Astronomical Telescopes and Instrumentation (Vol. 10154, p. 101541S). International Society for Optics and Photonics.](https://doi.org/10.1117/12.2247130)
