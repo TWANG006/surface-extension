@@ -112,5 +112,5 @@ plot(x, z, 'LineWidth', 2);hold off;
 % plot(x_ext, z_gp, 'Color', Colors(6,:), 'LineWidth', 2); hold on;
 % plot(x, z, 'Color', Colors(7,:),'LineWidth', 2);hold off;
 
-legend('smooth', 'smooth fall', 'flat', 'flat fall', 'Gauss', 'Gerchberg', 'original');
+legend('smooth', 'smooth fall', 'flat', 'flat fall', 'Gauss', 'Gerchberg', 'zero', 'original');
 title('Profiles of the center line');

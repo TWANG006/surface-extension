@@ -40,6 +40,6 @@ Goy = 0*Z_ext;
 Gox(:, fix(size(Z_ext,2)/2)+1+fx_range)=1;
 Goy(fix(size(Z_ext,1)/2)+1+fy_range,:)=1;
 
-Z_ext = SurfaceExtension_GerchbergPapoulis(Z_ext, G, Gy, Gox, Goy);
+Z_ext = Surface_Extension_GerchbergPapoulis(Z_ext, G, Gy, Gox, Goy);
 
 end
