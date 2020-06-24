@@ -11,6 +11,9 @@ Surface extension algorithms for arbitrary shape of the original surface error m
 - [x] C1 smooth extension withf all on edge [5, 6, 8]
 - [x] Gerchberg extension [1, 4, 6]
 
+## Example results
+![Surface Extension Results](/images/surface_extension_results.png)
+
 ## Usage
 **Note:**
 The main function is ```[X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension(X, Y, Z, brf_params, Z_tif,method, isFall, fx_range, fy_range)```.
