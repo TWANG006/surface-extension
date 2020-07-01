@@ -11,7 +11,7 @@ brf_dir = '../data/';
 % load brf data
 load([brf_dir 'step_0_fluid_jet_tif.mat']);
 X_tif = X;
-Y_tif = Y;
+Y_tif = Y; 
 Z_tif = Z;
 brf_params.A = 125e-9/20;
 brf_params.sigma_xy = FWHM2Sigma([4.293e-3, 4.293e-3]);

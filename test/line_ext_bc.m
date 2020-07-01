@@ -36,9 +36,9 @@ clear fitResult
 for N = 1:size(Z,2)
     line_num = N;
     % scale up
-    fit_input = Z(:,line_num).*1e6; fit_inputX = Y(:,line_num).*1e3;
+    fit_input = Z(:,line_num).*1e6; fit_inputX = Y(:,line_num).*1e3; dx = fit_inputX(3)-fit_inputX(2);
     % falling/extension boundarycondition
-    fit_input = [0 ;fit_input ;0];fit_inputX = [fit_inputX(1)-10; fit_inputX ;fit_inputX(end)+10];
+    fit_input = [0 ;fit_input ;0];fit_inputX = [fit_inputX(1)-30*dx; fit_inputX ;fit_inputX(end)+30*dx];
     % n th order polynomial
     Order = 6;
     A = zeros(length(fit_inputX),Order);
@@ -64,7 +64,7 @@ end
 
 figure(4);
 subplot(411);
-surf(fitResult(32:57,:)*1e3, 'EdgeColor', 'none');
+surf(fitResult(31:56,:)*1e3, 'EdgeColor', 'none');
 % axis image; 
 colormap jet;
 c = colorbar;
@@ -84,8 +84,8 @@ axis image;
 title('Original clear aperture');
 
 subplot(413);
-testR1 = fitResult(32:57,:)*1e3 - Z*1e9;
-surf(fitResult(32:57,:)*1e3 - Z*1e9, 'EdgeColor', 'none');
+testR1 = fitResult(31:56,:)*1e3 - Z*1e9;
+surf(fitResult(31:56,:)*1e3 - Z*1e9, 'EdgeColor', 'none');
 % axis image;
 colormap jet;
 c = colorbar;
@@ -96,7 +96,7 @@ title(['Residual without tilt removed = ' num2str(nanstd(testR1(:),1)) ' nm']);
 
 
 % testResult = RemoveSurface1(X,Y,Z-fitResult(32:57,:)*1e-6);
-Z_fitted = RemoveSurface1(X,Y,fitResult(32:57,:)*1e3);
+Z_fitted = RemoveSurface1(X,Y,fitResult(31:56,:)*1e3);
 Z_real = RemoveSurface1(X,Y,Z*1e9);
 testR2 = Z_real - Z_fitted;
 subplot(414);
