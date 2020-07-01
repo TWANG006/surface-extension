@@ -62,6 +62,17 @@ for N = 1:size(Z,2)
 
 end
 
+figure(2);
+surf(fitResult*1e3, 'EdgeColor', 'none');
+% axis image; 
+colormap jet;
+c = colorbar;
+c.Label.String = '[nm]';
+view([0 90]);
+axis image;
+title('Extended');
+
+
 figure(4);
 subplot(411);
 surf(fitResult(31:56,:)*1e3, 'EdgeColor', 'none');
