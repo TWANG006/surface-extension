@@ -64,8 +64,7 @@ end
 
 figure(4);
 subplot(411);
-Z_fitted = RemoveSurface1(X,Y,fitResult(32:57,:)*1e3);
-surf(Z_fitted, 'EdgeColor', 'none');
+surf(fitResult(32:57,:)*1e3, 'EdgeColor', 'none');
 % axis image; 
 colormap jet;
 c = colorbar;
@@ -75,8 +74,7 @@ axis image;
 title('Fitted clear aperture');
 
 subplot(412);
-Z_real = RemoveSurface1(X,Y,Z*1e9);
-surf(Z_real, 'EdgeColor', 'none');
+surf(Z*1e9, 'EdgeColor', 'none');
 % axis image; 
 colormap jet;
 c = colorbar;
@@ -98,6 +96,8 @@ title(['Residual without tilt removed = ' num2str(nanstd(testR1(:),1)) ' nm']);
 
 
 % testResult = RemoveSurface1(X,Y,Z-fitResult(32:57,:)*1e-6);
+Z_fitted = RemoveSurface1(X,Y,fitResult(32:57,:)*1e3);
+Z_real = RemoveSurface1(X,Y,Z*1e9);
 testR2 = Z_real - Z_fitted;
 subplot(414);
 surf(testR2, 'EdgeColor', 'none');
