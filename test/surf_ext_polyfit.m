@@ -55,7 +55,6 @@ Y_nor = -1 + 2.*(Y_ext - min(Y_ext(:)))./(max(Y_ext(:)) - min(Y_ext(:)));
 
 
 [~, ~, ~, z3, ~, ~, ~, ~] = ChebyshevXYJC(X_nor, Y_nor, 1:order, ones(order,1));
-% [~, ~, ~, z3, ~, ~, ~, ~] = LegendreXYJC(X_ext, Y_ext, 1:order, ones(order,1));
 z3 = reshape(z3, [],size(z3,3));
 
 A = z3(~isnan(Z_ext(:)),:);
