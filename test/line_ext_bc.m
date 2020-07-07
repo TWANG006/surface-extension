@@ -30,7 +30,7 @@ load([data_dir 'example_surf_rf.mat']);
 %% pick up the line and polyfit
 
 line_num = 1; fit_input = Z(:,line_num); fit_inputX = Y(:,line_num);
-figure(1);plot(fit_inputX,fit_input);
+% figure(1);plot(fit_inputX,fit_input);
 %% column extension
 clear fitResult
 for N = 1:size(Z,2)
@@ -61,22 +61,81 @@ for N = 1:size(Z,2)
 %     figure(3);plot(fit_inputX,fit_input-fitResult,'*');pause(0.1);title('residual Map');
 
 end
+%% fit row
+clear fitResult_row
+LextensionWidth = 30*3;
+RextensionWidth = 30;
+
+ for N = 1:size(fitResult,1)
+    line_num = N;
+    % scale up
+    fit_input = fitResult(line_num,:); fit_inputX = X(1,:); dx = fit_inputX(3)-fit_inputX(2); % I assume the meshgrid sample for fit_inputX generation.
+    
+    % falling/extension boundarycondition
+    fit_input = [0 fit_input 0]';
+    fit_inputX = [fit_inputX(1)-LextensionWidth*dx fit_inputX fit_inputX(end)+RextensionWidth*dx ]';
+     
+%     fit_input = [fit_input(1) fit_input fit_input(end)]';
+%     fit_inputX = [fit_inputX(1)-1*dx fit_inputX fit_inputX(end)+1*dx ]';
+    
+    % n th order polynomial
+    Order = 6;
+    A = zeros(length(fit_inputX),Order);
+    
+    for M = 1:Order
+    A(:,end-M+1) = fit_inputX.^M;    
+    end
+    
+    A(:,end+1) = ones(size(fit_inputX));
+    B = fit_input;
+    
+    fitParameters = A\B; % least squre fit
+    
+    
+    reConstructionX = fit_inputX(1):fit_inputX(3)-fit_inputX(2):fit_inputX(end);
+    fitResult_row(N,:) = polyval(fitParameters,reConstructionX);
+    
+    figure(1);subplot(131);plot(fit_inputX,fit_input,'*');title('Original Map');
+    subplot(132);plot(reConstructionX,fitResult_row(N,:),'*');title('fitting Map');
+    subplot(133);plot(fit_inputX(2:end-1),fit_input(2:end-1)'-...
+      fitResult_row(N,LextensionWidth+1:end-RextensionWidth),'*');title('residual Map');
+    pause
+ end
+
+%%
+fitResult_row = fitResult_row';
+%%
+
 
 figure(2);
+subplot(2,1,1)
 surf(fitResult*1e3, 'EdgeColor', 'none');
-% axis image; 
+axis image; 
 colormap jet;
 c = colorbar;
 c.Label.String = '[nm]';
 view([0 90]);
 axis image;
-title('Extended');
+title('Y Extended');
 
+
+subplot(2,1,2)
+surf(fitResult_row*1e3, 'EdgeColor', 'none');
+axis image; 
+colormap jet;
+c = colorbar;
+c.Label.String = '[nm]';
+view([0 90]);
+axis image;
+title('Y then X Extended');
+
+%
 
 figure(4);
 subplot(411);
-surf(fitResult(31:56,:)*1e3, 'EdgeColor', 'none');
-% axis image; 
+% surf(fitResult(31:56,:)*1e3, 'EdgeColor', 'none');
+surf(fitResult_row(31:56,LextensionWidth+1:end-RextensionWidth)*1e3, 'EdgeColor', 'none');
+axis image; 
 colormap jet;
 c = colorbar;
 c.Label.String = '[nm]';
@@ -95,8 +154,9 @@ axis image;
 title('Original clear aperture');
 
 subplot(413);
-testR1 = fitResult(31:56,:)*1e3 - Z*1e9;
-surf(fitResult(31:56,:)*1e3 - Z*1e9, 'EdgeColor', 'none');
+% testR1 = fitResult(31:56,:)*1e3 - Z*1e9;fitResult_row
+testR1 = fitResult_row(31:56,LextensionWidth+1:end-RextensionWidth)*1e3 - Z*1e9;
+surf(fitResult_row(31:56,LextensionWidth+1:end-RextensionWidth)*1e3 - Z*1e9, 'EdgeColor', 'none');
 % axis image;
 colormap jet;
 c = colorbar;
@@ -107,7 +167,7 @@ title(['Residual without tilt removed = ' num2str(nanstd(testR1(:),1)) ' nm']);
 
 
 % testResult = RemoveSurface1(X,Y,Z-fitResult(32:57,:)*1e-6);
-Z_fitted = RemoveSurface1(X,Y,fitResult(31:56,:)*1e3);
+Z_fitted = RemoveSurface1(X,Y,fitResult_row(31:56,LextensionWidth+1:end-RextensionWidth)*1e3);
 Z_real = RemoveSurface1(X,Y,Z*1e9);
 testR2 = Z_real - Z_fitted;
 subplot(414);
