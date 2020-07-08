@@ -4,15 +4,17 @@ function [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension(...
     Z_tif,  ...TIF profile
     method, ...extension method
     isFall, ...using fall profile or not
-    fx_range, fy_range ...frequency domains for Gerchberg Pouplis algorithm
+    fx_range, fy_range, ...frequency domains for Gerchberg Pouplis algorithm
+    order_m, order_n,... orders for polynomial fitting algorithm
+    type...polynomial type for polynomial fitting, 'Chebyshev' or 'Legendre'
     )
 %% Default parameters
 if nargin == 5
     method = 'smooth';
-    isFall = true;
+    isFall = false;
 end
 if nargin == 6
-    isFall = true;
+    isFall = false;
 end
 
 %% Different extension algorithms
@@ -30,13 +32,19 @@ elseif strcmp(method, 'gerchberg')
     else
         [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension_GP(X,Y,Z,brf_params.lat_res_brf,Z_tif, fx_range, fy_range);
     end
+elseif strcmp(method, 'poly')
+    if nargin ~=12
+        error('Not enough parameters for polynomial fitting algorithm: order_m, order_n, and type should be fed.');
+    else
+        [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension_Polyfit(X,Y,Z,brf_params.lat_res_brf,Z_tif,order_m,order_n,type);
+    end
 else
     error('Invalid algorithm selected.');
 end
 
 %% Fall or not
 if isFall
-    if(~strcmp(method, 'zeros') && ~strcmp(method, 'gauss'));
+    if(~strcmp(method, 'zeros') && ~strcmp(method, 'gauss') && ~strcmp(method, 'poly'))
         Z_ext = Surface_Extension_Fall(X_ext, Y_ext, Z_ext, ca_range, brf_params, Z_tif);
     else
         warning(['Fall profile is automatically disabled for ' method ' algorithm']);
