@@ -37,21 +37,21 @@ function [T ... dwell map of the 2D IBF [s]
 %% Calculate the dwell time by refining the inverse filtering threshold gamma
 % 1. First time to get the gamma0
 % Calculate T for the dwell grid
-Z_to_remove_dw = Z_to_remove(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+Z_to_remove_dw = Z_to_remove(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
 Z_to_remove_dw = Z_to_remove_dw - nanmin(Z_to_remove_dw(:) + Z_last_removal_dw(:));
 T_dw = DwellTime2D_FFT_InverseFilter_Test(Z_to_remove_dw, B, 1, false);
 
 % Only keep T in the dwell grid and let others to be 0
 T = zeros(size(Z_to_remove));
-T(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e) = T_dw;
+T(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e) = T_dw;
 
 % Calculate the height removal in the entire aperture
 Z_removal = ConvFFT2(T,B); 
 
 % Obtain the height to remove and height removal in the clear aperture
-Z_to_remove_ca = Z_to_remove(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
-Z_removal_ca = Z_removal(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
-%Z_to_remove_dw = Z_to_remove(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+Z_to_remove_ca = Z_to_remove(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
+Z_removal_ca = Z_removal(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
+%Z_to_remove_dw = Z_to_remove(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
 
 % Get gamma0
 gamma0 = nanstd(Z_to_remove_ca(:), 1) / nanstd(Z_removal_ca(:), 1);
@@ -68,35 +68,35 @@ T_dw = DwellTime2D_FFT_InverseFilter_Test(Z_to_remove_dw, B, gamma, false);
 
 % Only keep T in the dwell grid and let others to be 0
 T = zeros(size(Z_to_remove));
-T(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e) = T_dw;
+T(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e) = T_dw;
 
 % Calculate the height removal in the entire aperture
 Z_removal = ConvFFT2(T,B); 
 
 % Obtain the height to remove and height removal in the clear aperture
-Z_to_remove_ca = Z_to_remove(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
-Z_to_remove_dw = Z_to_remove(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+Z_to_remove_ca = Z_to_remove(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
+Z_to_remove_dw = Z_to_remove(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
     
 % Get the Tdw on dwell grid
-T_dw = T(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+T_dw = T(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
 
 %% Obtain the entire aperture result
 Z_residual = Z_to_remove - Z_removal;
 
 %% Obtain the dwell grid result
-Z_removal_dw = Z_removal(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
-Z_residual_dw = Z_residual(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+Z_removal_dw = Z_removal(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
+Z_residual_dw = Z_residual(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
 
 %% Obtain the clear aperture results
-Z_removal_ca = Z_removal(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
-Z_residual_ca = Z_residual(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
+Z_removal_ca = Z_removal(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
+Z_residual_ca = Z_residual(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
 
 % De-tilt
-[x_ca,y_ca] = meshgrid(1:size(Z_to_remove_ca,2),1:size(Z_to_remove_ca, 1));
-Z_to_remove_ca = RemoveSurface1(x_ca, y_ca, Z_to_remove_ca);
+[u_ca,v_ca] = meshgrid(1:size(Z_to_remove_ca,2),1:size(Z_to_remove_ca, 1));
+Z_to_remove_ca = RemoveSurface1(u_ca, v_ca, Z_to_remove_ca);
 Z_to_remove_ca = Z_to_remove_ca - nanmin(Z_to_remove_ca(:));
-Z_removal_ca = RemoveSurface1(x_ca, y_ca, Z_removal_ca);
+Z_removal_ca = RemoveSurface1(u_ca, v_ca, Z_removal_ca);
 Z_removal_ca = Z_removal_ca - nanmin(Z_removal_ca(:));
-Z_residual_ca = RemoveSurface1(x_ca, y_ca, Z_residual_ca);
+Z_residual_ca = RemoveSurface1(u_ca, v_ca, Z_residual_ca);
 
 end

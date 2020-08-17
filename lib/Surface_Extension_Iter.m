@@ -2,16 +2,16 @@ function [TT, B, Z_residual_ca] = Surface_Extension_Iter(...
     X, Y, Z,...unextended surface error map
     brf_params,...TIF sampling interval [m/pxl]
     brf_mode,...
-    dx_ibf,...
+    du_ibf,...
     rms_thrd,...
     X_tif, Y_tif, Z_tif, ...TIF profile
     initExtMethod,...initial extention method
     ini_isFall,...
-    ini_fx_range, ini_fy_range,...for gerchberg initial extention method
+    ini_fu_range, ini_fv_range,...for gerchberg initial extention method
     ini_order_m, ini_order_n,ini_type,...  for poly initial extension method    
     iterExtMethod, ... has initial extension or not
     iter_isFall,...
-    iter_fx_range, iter_fy_range,...for gerchberg initial extention method
+    iter_fu_range, iter_fv_range,...for gerchberg initial extention method
     iter_order_m, iter_order_n,iter_type...  for poly initial extension method 
 )
 
@@ -22,7 +22,7 @@ function [TT, B, Z_residual_ca] = Surface_Extension_Iter(...
     Z_tif,...
     initExtMethod,...
     ini_isFall,...
-    ini_fx_range, ini_fy_range,...
+    ini_fu_range, ini_fv_range,...
     ini_order_m, ini_order_n,ini_type);
 Z_ini = Z_ext - nanmin(Z_ext(:));
 
@@ -37,7 +37,7 @@ pixel_m = median(diff(X(1,:)));
 %     'RMS_dif', 0.02e-9, ...[m]
 %     'dwellTime_dif', 60, ...[s]
 %     'isDownSampling', false, ...
-%     'samplingInterval', dx_ibf ... [m]
+%     'samplingInterval', du_ibf ... [m]
 % );
 
 options = struct(...
@@ -47,7 +47,7 @@ options = struct(...
     'RMS_dif', 0.02e-9, ...[m]
     'dwellTime_dif', 60, ...[s]
     'isDownSampling', false, ...
-    'samplingInterval', dx_ibf ... [m]
+    'samplingInterval', du_ibf ... [m]
 );
 
 ratio = 1;
@@ -83,7 +83,7 @@ TT = TT + T_P;
 
 %% Iterative refinement
 Z_residual_ca_prev = Z_residual_ca;
-max_iter = 20;
+mau_iter = 20;
 iter = 1;
 
 while(true)
@@ -102,13 +102,13 @@ while(true)
             Z_tif,...
             iterExtMethod,...
             iter_isFall,...
-            iter_fx_range, iter_fy_range,...
+            iter_fu_range, iter_fv_range,...
             iter_order_m, iter_order_n,iter_type);
     end
 
 
     % Calculate dwell time
-    dx_ibf = 1e-3;     % [m] ibf dwell grid sampling interval
+    du_ibf = 1e-3;     % [m] ibf dwell grid sampling interval
 
     % dwell time calculation
     options = struct(...
@@ -118,7 +118,7 @@ while(true)
         'RMS_dif', 0.02e-9, ...[m]
         'dwellTime_dif', 60, ...[s]
         'isDownSampling', false, ...
-        'samplingInterval', dx_ibf ... [m]
+        'samplingInterval', du_ibf ... [m]
     );
 
     % options = struct(...
@@ -128,7 +128,7 @@ while(true)
     %     'RMS_dif', 0.02e-9, ...[m]
     %     'dwellTime_dif', 60, ...[s]
     %     'isDownSampling', false, ...
-    %     'samplingInterval', dx_ibf ... [m]
+    %     'samplingInterval', du_ibf ... [m]
     % );
 
     %  X_brf=0;
@@ -169,7 +169,7 @@ while(true)
     elseif(std_curr < rms_thrd)
         TT = TT + T_P;
         break;
-    elseif(iter>max_iter)
+    elseif(iter>mau_iter)
         break;
     else
         Z_residual_ca_prev = Z_residual_ca;
@@ -180,7 +180,7 @@ while(true)
 end
 
 Z_ext = NaN(size(X_ext));   ... mark the Z_ext to NaN
-Z_ext(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) = Z;... fill in the valid data point
+Z_ext(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) = Z;... fill in the valid data point
 r = max(size(Z_ext)-size(Z))/2;
 
 % obtain the are of extension
@@ -194,7 +194,7 @@ TT(id_ext) = 0;
 
 Z_removal_dw = ConvFFT2(TT,B);
 Z_residual_dw = Z_ini - Z_removal_dw;
-Z_residual_ca = Z_residual_dw(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
+Z_residual_ca = Z_residual_dw(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
 Z_residual_ca = RemoveSurface1(X_ca, Y_ca, Z_residual_ca);
 
 end

@@ -4,7 +4,7 @@ function [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension(...
     Z_tif,  ...TIF profile
     method, ...extension method
     isFall, ...using fall profile or not
-    fx_range, fy_range, ...frequency domains for Gerchberg Pouplis algorithm
+    fu_range, fv_range, ...frequency domains for Gerchberg Pouplis algorithm
     order_m, order_n,... orders for polynomial fitting algorithm
     type...polynomial type for polynomial fitting, 'Chebyshev' or 'Legendre'
     )
@@ -28,9 +28,9 @@ elseif strcmp(method, 'gauss')
     [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension_Gauss(X,Y,Z,brf_params,Z_tif);
 elseif strcmp(method, 'gerchberg')
     if nargin ~= 9
-        error('Not enough parameters for Gerchberg algorithm:fx_range and fy_range should be fed.');
+        error('Not enough parameters for Gerchberg algorithm:fu_range and fv_range should be fed.');
     else
-        [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension_GP(X,Y,Z,brf_params.lat_res_brf,Z_tif, fx_range, fy_range);
+        [X_ext, Y_ext, Z_ext, ca_range] = Surface_Extension_GP(X,Y,Z,brf_params.lat_res_brf,Z_tif, fu_range, fv_range);
     end
 elseif strcmp(method, 'poly')
     if nargin ~=12

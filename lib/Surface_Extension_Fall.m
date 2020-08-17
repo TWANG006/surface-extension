@@ -14,31 +14,31 @@ function Z_fall = Surface_Extension_Fall(...
 r = max(size(Z_tif)-1) * brf_params.lat_res_brf * 0.5; ... radius of the TIF
 
 Z_fall = NaN(size(Z_ext));   ... initial extension matrix with NaNs
-Z_fall(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) = 1;    ... fill 1 in the valid data point
+Z_fall(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) = 1;    ... fill 1 in the valid data point
 
 %% Finding edge points
 id_edg = Surface_Extension_EdgeExtraction(Z_fall);
-x_edg = X_ext(id_edg);
-y_edg = Y_ext(id_edg);
+u_edg = X_ext(id_edg);
+v_edg = Y_ext(id_edg);
 
 % figure,imagesc(id_edg);
 
 %% Obtain the filled & original ids
 id_fil = isnan(Z_fall); ... filled data ids
-x_fil = X_ext(id_fil);  ... x coordinates of filled data
-y_fil = Y_ext(id_fil);  ... y coordinates of filled data
+u_fil = X_ext(id_fil);  ... x coordinates of filled data
+v_fil = Y_ext(id_fil);  ... y coordinates of filled data
 
 %% Calculate fall profiles
 fun = @(x, A, sigma) A*exp(-(x).^2/(2*sigma.^2));
 B = 1/integral(@(x)fun(x,brf_params.A, brf_params.sigma_xy(1)), -(r), r);
 
-fall_profiles = zeros*x_fil;
-for k = 1:length(x_fil)
+fall_profiles = zeros*u_fil;
+for k = 1:length(u_fil)
     % min distances from filled points to edge points
-%     fall_profiles(k) = min(sqrt((x_fil(k) - x_edg).^2+(y_fil(k) - y_edg).^2));
+%     fall_profiles(k) = min(sqrt((u_fil(k) - u_edg).^2+(v_fil(k) - v_edg).^2));
     
     % calculate the fall profile
-    fall_profiles(k) = B*integral(@(x)fun(x,brf_params.A, brf_params.sigma_xy(1)), -(r-min(sqrt((x_fil(k) - x_edg).^2+(y_fil(k) - y_edg).^2))), r);
+    fall_profiles(k) = B*integral(@(x)fun(x,brf_params.A, brf_params.sigma_xy(1)), -(r-min(sqrt((u_fil(k) - u_edg).^2+(v_fil(k) - v_edg).^2))), r);
     
 end
 

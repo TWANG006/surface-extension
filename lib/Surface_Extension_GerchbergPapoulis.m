@@ -5,7 +5,7 @@ function uk = Surface_Extension_GerchbergPapoulis(...
     Gox, ...frequency-domain gate function in horizontal direction
     Goy, ...frequency-domain gate function in vertical direction
     rms_thrd,...the rms threshold between each two consecutive iterations
-    max_iter...max number of iterations
+    mau_iter...max number of iterations
     )
 % Function to perform the improved 2D Gerchberg-Papoulis bandlimited
 % surface extrapolation algorithm. 
@@ -17,17 +17,17 @@ function uk = Surface_Extension_GerchbergPapoulis(...
 %% Initialization
 if nargin == 5
     rms_thrd = 1e-9;
-    max_iter = 500;
+    mau_iter = 500;
 end
 if nargin == 6
-    max_iter = 500;
+    mau_iter = 500;
 end
 
 u_pre = u0.*G; v_pre = u_pre; w_pre = u_pre;
 
 %% Iterative update
 i=1;
-while i <= max_iter
+while i <= mau_iter
     wk = (1-G).*ifft(ifftshift(Gox.*fftshift(fft(w_pre, [], 2), 2), 2), [], 2);
     vk = (1-Gy).*ifft(ifftshift(Goy.*fftshift(fft(v_pre, [], 1), 1), 1), [], 1) + wk;
     uk = u_pre + vk;

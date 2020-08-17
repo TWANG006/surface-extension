@@ -110,12 +110,12 @@ BRF_params.d_pix = d_p;
 [mM, nM] = size(Z_to_remove);   
 
 % Get the dwell grid pixel range
-dw_range.x_s = ca_range.x_s - r_p;   dw_range.x_e = ca_range.x_e + r_p;
-dw_range.y_s = ca_range.y_s - r_p;   dw_range.y_e = ca_range.y_e + r_p;
+dw_range.u_s = ca_range.u_s - r_p;   dw_range.u_e = ca_range.u_e + r_p;
+dw_range.v_s = ca_range.v_s - r_p;   dw_range.v_e = ca_range.v_e + r_p;
 
 % Determine if the range is valid
-if(dw_range.x_s<1 || dw_range.x_e >nM || dw_range.y_s <1 || dw_range.y_e > mM)
-    error(['Invalid clear aperture range with [' num2str(dw_range.x_s) ', ' num2str(dw_range.x_e) ']' ' and ' '[' num2str(dw_range.y_s) ', ' num2str(dw_range.y_e) ']']);
+if(dw_range.u_s<1 || dw_range.u_e >nM || dw_range.v_s <1 || dw_range.v_e > mM)
+    error(['Invalid clear aperture range with [' num2str(dw_range.u_s) ', ' num2str(dw_range.u_e) ']' ' and ' '[' num2str(dw_range.v_s) ', ' num2str(dw_range.v_e) ']']);
 else
 %     % Get X, Y pixel coordinates
 %     [X, Y] = meshgrid(0:nM -1, 0:mM - 1);
@@ -125,12 +125,12 @@ else
 %     Y = Y * pixel_m;
     
     % Dwell grid coordinates
-    X_dw = X(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
-    Y_dw = Y(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+    X_dw = X(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
+    Y_dw = Y(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
     
     % Clear aperture coordinates
-    X_ca = X(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
-    Y_ca = Y(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);    
+    X_ca = X(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
+    Y_ca = Y(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);    
 end
 
 %% 4. Real FFT algorithm
@@ -216,15 +216,15 @@ if options.isDownSampling == true
         Z_residual = reshape(Z_residual, size(Z_to_remove));  
 
         % Dwell grid results
-        Z_to_remove_dw = Z_to_remove(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
-        Z_removal_dw = Z_removal(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
-        Z_residual_dw = Z_residual(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);   
+        Z_to_remove_dw = Z_to_remove(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
+        Z_removal_dw = Z_removal(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
+        Z_residual_dw = Z_residual(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);   
     else
         Z_removal = 0;
         Z_residual = 0;
      
         % Dwell grid results
-        Z_to_remove_dw = Z_to_remove(dw_range.y_s:dw_range.y_e, dw_range.x_s:dw_range.x_e);
+        Z_to_remove_dw = Z_to_remove(dw_range.v_s:dw_range.v_e, dw_range.u_s:dw_range.u_e);
         Z_removal_dw = 0;
         Z_residual_dw = 0;   
     end

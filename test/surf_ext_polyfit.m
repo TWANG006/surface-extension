@@ -37,14 +37,14 @@ tif_mpp = median(diff(X_brf(1,:)));
 % n_ext = round(tif_mpp*(size(Z_tif, 2))*0.5/surf_mpp);   ... extension size in x [pixel] 
 % 
 % % clear aperture
-% ca_range.y_s = m_ext + 1;   ca_range.y_e = ca_range.y_s + m - 1;   ... y start & end ids of CA in FA [pixel]
-% ca_range.x_s = n_ext + 1;   ca_range.x_e = ca_range.x_s + n - 1;   ... x start & end ids of CA in FA [pixel]
+% ca_range.v_s = m_ext + 1;   ca_range.v_e = ca_range.v_s + m - 1;   ... y start & end ids of CA in FA [pixel]
+% ca_range.u_s = n_ext + 1;   ca_range.u_e = ca_range.u_s + n - 1;   ... x start & end ids of CA in FA [pixel]
 % 
 % % dwell grid
-% dw_range.y_s = ca_range.y_s - r_pix;
-% dw_range.x_s = ca_range.x_s - r_pix;
-% dw_range.y_e = ca_range.y_e + r_pix;
-% dw_range.x_e = ca_range.x_e + r_pix;
+% dw_range.v_s = ca_range.v_s - r_pix;
+% dw_range.u_s = ca_range.u_s - r_pix;
+% dw_range.v_e = ca_range.v_e + r_pix;
+% dw_range.u_e = ca_range.u_e + r_pix;
 % 
 % 
 % [X_ext, Y_ext] = meshgrid(-n_ext:n-1+n_ext, -m_ext:m-1+m_ext);  ...extension grid
@@ -52,7 +52,7 @@ tif_mpp = median(diff(X_brf(1,:)));
 % Y_ext = Y_ext * surf_mpp + Y(1,1);  ... adjust Y grid add Y(1,1)
 % 
 % Z_ext = NaN(size(X_ext));   ... mark the Z_ext to NaN
-% Z_ext(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) = Z;... fill in the valid data point
+% Z_ext(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) = Z;... fill in the valid data point
 
 %% Fit the edge values
 % zero boundary contidion
@@ -82,7 +82,7 @@ tif_mpp = median(diff(X_brf(1,:)));
     'poly',...
     false,...
     [],[],...
-    8, 256,...polynomial orders in y, x
+    8, 27,...polynomial orders in y, x
     'Chebyshev'...Chebyshev or Legendre
     );
 
@@ -95,7 +95,7 @@ axis image;
 colorbar;
 
 subplot(322);
-surf(X*1e3, Y*1e3, 1e9*Z_fit(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e), 'EdgeColor', 'none');
+surf(X*1e3, Y*1e3, 1e9*Z_fit(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e), 'EdgeColor', 'none');
 view([0 90]);
 axis image;
 colorbar;
@@ -107,7 +107,7 @@ axis image;
 colorbar;
 
 subplot(326);
-Z_residual = 1e9*(Z_fit(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) - Z);
+Z_residual = 1e9*(Z_fit(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) - Z);
 surf(X*1e3, Y*1e3, Z_residual, 'EdgeColor', 'none');
 view([0 90]);
 colorbar;
@@ -115,7 +115,7 @@ axis image;
 title(['Residual = ' num2str(nanstd(Z_residual(:),1)) ' nm']);
 
 %% calculation
-dx_ibf = 1e-3;
+du_ibf = 1e-3;
 brf_mode = 'avg';
 ratio = 1;
 tmin=0;
@@ -130,11 +130,11 @@ options = struct(...
     'RMS_dif', 0.02e-9, ...[m]
     'dwellTime_dif', 60, ...[s]
     'isDownSampling', false, ...
-    'samplingInterval', dx_ibf ... [m]
+    'samplingInterval', du_ibf ... [m]
 );
 
 Z_ext = NaN(size(X_ext));   ... mark the Z_ext to NaN
-Z_ext(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) = Z_fit(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);... fill in the valid data point
+Z_ext(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) = Z_fit(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);... fill in the valid data point
 r = max(size(Z_ext)-size(Z))/2;
 % obtain the are of extension
 [u,v] = meshgrid(-r:r,-r:r);
@@ -143,7 +143,7 @@ se = rr<=r;
 BW_Z = imdilate(~isnan(Z_ext), se);
 id_ext = BW_Z ==0;
 
-Z_fit(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e) = Z;
+Z_fit(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e) = Z;
 [B... BRF
     , X_B, Y_B...BRF Coordinates
     , ~, ~... full aperture results [m]
@@ -173,7 +173,7 @@ Z_removal_dw = ConvFFT2(T,B);
 Z_fit_rm = RemoveSurface1(X_ext, Y_ext, Z_fit);
 Z_fit_rm = Z_fit_rm - nanmin(Z_fit_rm(:));
 Z_residual_dw = Z_fit_rm - nanmin(Z_fit_rm(:)) - Z_removal_dw;
-Z_residual_ca = Z_residual_dw(ca_range.y_s:ca_range.y_e, ca_range.x_s:ca_range.x_e);
+Z_residual_ca = Z_residual_dw(ca_range.v_s:ca_range.v_e, ca_range.u_s:ca_range.u_e);
 Z_residual_ca = RemoveSurface1(X_ca, Y_ca, Z_residual_ca);
 
 %% Iterative solution
