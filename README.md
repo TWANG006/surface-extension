@@ -8,7 +8,7 @@ Surface extension algorithms for arbitrary shape of the original surface error m
 - [x] Nearest neighbor extension [2, 6, 8]
 - [x] Nearest neighbor extension with fall on edge [8]
 - [x] C1 smooth extension [5, 6, 8]
-- [x] C1 smooth extension withf all on edge [5, 6, 8]
+- [x] C1 smooth extension with fall on edge [5, 6, 8]
 - [x] Gerchberg extension [1, 4, 6]
 
 ## Example results
