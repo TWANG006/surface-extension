@@ -10,8 +10,8 @@ surf_mpp = median(diff(X(1,:)));    ... surface sampling interval [m/pxl]
 m = size(Z,1);  ... CA height [pixel]
 n = size(Z,2);  ... CA width [pixel]
 
-m_ext = round(tif_mpp*(size(Z_tif, 1))*0.5/surf_mpp);   ... extension size in y [pixel]
-n_ext = round(tif_mpp*(size(Z_tif, 2))*0.5/surf_mpp);   ... extension size in x [pixel] 
+m_ext = floor(tif_mpp*(size(Z_tif, 1))*0.5/surf_mpp);   ... extension size in y [pixel]
+n_ext = floor(tif_mpp*(size(Z_tif, 2))*0.5/surf_mpp);   ... extension size in x [pixel] 
 
 
 ca_range.v_s = m_ext + 1;   ca_range.v_e = ca_range.v_s + m - 1;   ... y start & end ids of CA in FA [pixel]
